@@ -1,0 +1,5 @@
+task1/bin/*.*
+
+task1/bin/
+
+task1/obj/Debug/*.exe
