@@ -148,7 +148,7 @@ namespace task1
 			return sum;
 		}
 
-        public void Register(string name, int age, string sex, string email, string password, double cash = 0f)
+        protected void Register(string name, int age, string sex, string email, string password, double cash = 0f)
         {
 			if (this.Exist(name)) {
 				Console.WriteLine("Пользователь с таким именем уже существует!");
@@ -180,7 +180,7 @@ namespace task1
             db.Show("Products", "Customer='" + this.name + "'");
         }
 
-        public void CreateClientTable()
+        protected void CreateClientTable()
         {
             // параметры для создания таблицы
             List<string> options = new List<string>() {
@@ -198,7 +198,7 @@ namespace task1
             db.CreateTable("Clients", options);
         }
 
-        public void CreateProductTable()
+        protected void CreateProductTable()
         {
             // параметры для создания таблицы
             List<string> options = new List<string>() {
@@ -211,5 +211,9 @@ namespace task1
             // создание таблицы
             db.CreateTable("Products", options);
         }
+
+		protected void CreateDB() {
+			db.Create();
+		}
     }
 }

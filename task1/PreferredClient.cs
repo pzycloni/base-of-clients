@@ -15,6 +15,11 @@ namespace task1
         {
 			secret_word = "DX";
 
+			// создаем таблицы, если их нет
+			CreateDB();
+			CreateClientTable();
+			CreateProductTable();
+
 			// загрузка данных из бд
 			if (Exist(name)) {
 				LoadInformation();
@@ -41,6 +46,17 @@ namespace task1
 				password = Console.ReadLine();
 
 				Register(name, age, sex, email, password);
+
+				Console.WriteLine("Хотите положить деньги на счет(Y/N): ");
+				string answer = Console.ReadLine();
+				
+				// кладем деньги
+				if ("y".ToUpper() == answer || "y" == answer) {
+					Console.WriteLine("Хотите положить деньги на счет(Y/N): ");
+					double cash = Convert.ToDouble(Console.ReadLine());
+					PutMoney(cash);
+				}
+				
 			}
         }
 

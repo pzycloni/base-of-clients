@@ -11,49 +11,33 @@ namespace task1
     {
         static void Main(string[] args)
         {
-            string name = "Alex";
-            string sex = "man";
-            int age = 22;
-            string email = "gukklucky@gmail.com";
-            string password = "qwertyui";
+            string name = null;
+            string password = null;
 
-            DB db = new DB();
-            //db.Create();
+			Console.WriteLine("Введите свое имя: ");
+			name = Console.ReadLine();
+
+			Console.WriteLine("Введите пароль: ");
+			password = Console.ReadLine();
 
             PreferredClient client = new PreferredClient(name, password);
 
-		    client.CreateClientTable();
-            client.CreateProductTable();
-
-            //записываем клиента в бд
-            //client.Register(name, age, sex, email, password);
-
-            //client.LoadInformation();
-            
-            //client.PutMoney(150000);
+            client.PutMoney(150000);
 
             Product macbook = new Product("mackbook", 100000);
-            //client.Buy(macbook);
+            client.Buy(macbook);
 
             Product airpods = new Product("airpods", 2000);
             client.Buy(airpods);
-
-            string users = "Clients",
-                   products = "Products";
 
             client.ShowClient();
 
             client.ShowProducts();
 
-            // записываем клиента в бд
-            //client.Register(name, age, sex, email, password);
-            // вывести всех клиентов
-            //client.ShowClient();
-
-            //client.DropClientTable();
-            //db.DropTable(users);
-            //db.DropTable(products);
-            //db.Drop();
+            /*DB db = new DB();
+            db.DropTable("Clients");
+            db.DropTable("Products");
+            db.Drop();*/
         }
     }
 }
