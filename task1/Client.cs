@@ -9,24 +9,21 @@ namespace task1
 {
     class Client : Person
     {
-        protected List<Product> purchases;
         protected DB db;
         protected List<string> columns;
 
+		protected double discount;
         private string email;
         private string password;
-        private string salt;
-        protected List<Product> history;
         protected double money;
 
 
         public Client(string name, string password)
         {
-            this.purchases = new List<Product>();
-            this.history = new List<Product>();
-
             this.name = name;
             this.password = password;
+
+			this.discount = 0;
 
             db = new DB();
 
@@ -36,13 +33,21 @@ namespace task1
                 "Sex",
                 "Email",
                 "Password",
-                "Money"
+                "Money",
+				"Discount"
             };
        
         }
 
+		public bool Exist(string name) {
+			int count = 0;
+
+			count = db.Select("Clients", "Name='" + name + "'").Count;
+			return Convert.ToBoolean(count);
+		}
+
         public void LoadInformation() {
-            List<KeyValuePair<string, string>> information = db.Select("Clients", "Name='" + this.name + "'");
+            List<KeyValuePair<string, string>> information = db.Select("Clients", "Name='" + name + "'");
 
             // присвоение загруженных параметров
             foreach (KeyValuePair<string, string> info in information)
@@ -72,6 +77,10 @@ namespace task1
                     case "Money":
                         this.money = Convert.ToDouble(info.Value);
                         break;
+
+					case "Discount":
+						this.discount = Convert.ToDouble(info.Value);
+						break;
                 }
             }
         }
@@ -93,17 +102,30 @@ namespace task1
             return false;
         }
 
+		public void PutDiscount(double discount) {
+			string where = "Name='" + this.name + "'";
+			db.Update("Clients", new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(columns[6], discount.ToString()) }, where);
+		}
+
         public bool Buy(Product product)
         {
-            List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>() {
+            List<KeyValuePair<string, string>> product_parameters = new List<KeyValuePair<string, string>>() {
                 new KeyValuePair<string, string>("Customer", this.name),
                 new KeyValuePair<string, string>("Name", product.name),
                 new KeyValuePair<string, string>("Price", product.price.ToString())
             };
-
+			
             if (product.price <= this.money)
             {
-                db.Insert("Products", parameters);
+				this.money -= product.price;
+				product.price -= product.price * this.discount;
+
+				List<KeyValuePair<string, string>> client_parameters = new List<KeyValuePair<string, string>>() {
+					new KeyValuePair<string, string>("Money", this.money.ToString())
+				};
+				
+                db.Insert("Products", product_parameters);
+				db.Update("Clients", client_parameters, "Name='" + this.name + "'");
                 Console.WriteLine("Покупка совершена!");
 
                 return true;
@@ -114,8 +136,25 @@ namespace task1
             return false;
         }
 
+		public double SumProducts() {
+			List<KeyValuePair<string, string>> rows = db.Select("Products", "Customer='" + this.name + "'");
+			double sum = 0;
+
+			foreach (KeyValuePair<string, string> row in rows) {
+				if (row.Key == "Price") {
+					sum += Convert.ToDouble(row.Value);
+				}
+			}
+			return sum;
+		}
+
         public void Register(string name, int age, string sex, string email, string password, double cash = 0f)
         {
+			if (this.Exist(name)) {
+				Console.WriteLine("Пользователь с таким именем уже существует!");
+				return;
+			}
+
             // поля и значения
             List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>() {
                 new KeyValuePair<string, string>(this.columns[0], name),
@@ -124,9 +163,11 @@ namespace task1
                 new KeyValuePair<string, string>(this.columns[3], email),
                 new KeyValuePair<string, string>(this.columns[4], password),
                 new KeyValuePair<string, string>(this.columns[5], cash.ToString()),
+				new KeyValuePair<string, string>(this.columns[6], discount.ToString())
             };
 
-            db.Insert("Clients", parameters);
+			db.Insert("Clients", parameters);
+            
         }
 
         public void ShowClient()
@@ -149,7 +190,8 @@ namespace task1
                 "Sex NVARCHAR(10) NULL",
                 "Email NVARCHAR(100) NULL",
                 "Password NVARCHAR(100) NULL",
-                "Money NVARCHAR(100) NOT NULL",
+                "Discount NVARCHAR(100) NULL",
+                "Money NVARCHAR(100) NULL",
                 "CONSTRAINT PK_Client PRIMARY KEY (ID ASC)"
             };
             // создание таблицы
@@ -169,6 +211,5 @@ namespace task1
             // создание таблицы
             db.CreateTable("Products", options);
         }
-
     }
 }

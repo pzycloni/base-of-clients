@@ -9,10 +9,12 @@ namespace task1
 {
     class DB
     {
-        private string BaseName {get; set;}
+		private List<string> errors = null;
 
         public DB()
-        { }
+        {
+			errors = new List<string>();
+		}
 
         private string BuildString(List<string> rows, string wrapper = "")
         {
@@ -40,10 +42,15 @@ namespace task1
 
                 string query = "CREATE DATABASE " + "mytest" + ";";
 
-                using (var command = new SqlCommand(query, connection))
-                {
-                    command.ExecuteNonQuery();
-                }
+				try {
+					using (var command = new SqlCommand(query, connection)) {
+						command.ExecuteNonQuery();
+					}
+				} catch (Exception e) {
+					errors.Add(e.Message);
+					Console.WriteLine("БД mytest уже существует!");
+				}
+                
             }
         }
 
@@ -64,20 +71,22 @@ namespace task1
 
                 connection.Open();
 
-                using (var command = new SqlCommand(query, connection))
-                {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            for (int col = 0; col < reader.FieldCount; col++)
-                            {
-                                string result = reader.GetName(col) + ": " + reader[col];
-                                Console.WriteLine(result);
-                            }
-                        }
-                    }
-                }
+				try {
+					using (var command = new SqlCommand(query, connection)) {
+						using (var reader = command.ExecuteReader()) {
+							while (reader.Read()) {
+								for (int col = 0; col < reader.FieldCount; col++) {
+									string result = reader.GetName(col) + ": " + reader[col];
+									Console.WriteLine(result);
+								}
+							}
+						}
+					}
+				} catch (Exception e) {
+					errors.Add(e.Message);
+					Console.WriteLine("Таблицы " + table + " не существует!");
+				}
+                
             }
         } 
 
@@ -90,13 +99,15 @@ namespace task1
                 string query = "USE " + "mytest" + "; " +
                         "CREATE TABLE " + table +
                         "(" + this.BuildString(rows) + ");";
-
-                Console.WriteLine(query);
-
-                using (var command = new SqlCommand(query, connection))
-                {
-                    command.ExecuteNonQuery();
-                }
+				try {
+					using (var command = new SqlCommand(query, connection)) {
+						command.ExecuteNonQuery();
+					}
+				} catch (Exception e){
+					errors.Add(e.Message);
+					Console.WriteLine("Таблица " + table + " уже существует!");
+				}
+                
             }
         }
 
@@ -120,11 +131,15 @@ namespace task1
 
                 string query = "USE mytest; INSERT INTO " + table + 
                                 "(" + fields + ") VALUES (" + vals + ");";
-
-                using (var command = new SqlCommand(query, connection))
-                {
-                    command.ExecuteNonQuery();
-                }
+				try {
+					using (var command = new SqlCommand(query, connection)) {
+						command.ExecuteNonQuery();
+					}
+				} catch (Exception e) {
+					errors.Add(e.Message);
+					Console.WriteLine("Таблицы " + table + " не существует!");
+				}
+                
             }
         }
 
@@ -146,15 +161,20 @@ namespace task1
 
             using (var connection = new SqlConnection(task1.Properties.Settings.Default.Database1ConnectionString))
             {
-                string query = "UPDATE " + table + " SET " + set + " WHERE " + where + ";";
+                string query = "USE mytest; UPDATE " + table + " SET " + set + " WHERE " + where + ";";
                 
                 connection.Open();
 
-                using (var command = new SqlCommand(query, connection))
-                {
-                    Console.WriteLine(query);
-                    command.ExecuteNonQuery();
-                }
+				try {
+					using (var command = new SqlCommand(query, connection)) {
+						command.ExecuteNonQuery();
+					}
+				} catch (Exception e) {
+					errors.Add(e.Message);
+					Console.WriteLine("Таблицы " + table + " не существует!");
+				}
+                
+				
             }
 
         }
@@ -165,27 +185,45 @@ namespace task1
             {
                 string query = "DROP DATABASE mytest;";
                 connection.Open();
-
-                using (var command = new SqlCommand(query, connection))
-                {
-                    command.ExecuteNonQuery();
-                }
+				try {
+					using (var command = new SqlCommand(query, connection)) {
+						command.ExecuteNonQuery();
+					}
+				} catch (Exception e) {
+					errors.Add(e.Message);
+					Console.WriteLine("БД mytest не существует!");
+				}
+                
             }
         }
 
-        public void DropTable(string name)
+        public void DropTable(string table)
         {
             using (var connection = new SqlConnection(task1.Properties.Settings.Default.Database1ConnectionString))
             {
-                string query = "DROP TABLE " + name + ";";
+                string query = "USE mytest; DROP TABLE " + table + ";";
                 connection.Open();
 
-                using (var command = new SqlCommand(query, connection))
-                {
-                    command.ExecuteNonQuery();
-                }
+				try {
+					using (var command = new SqlCommand(query, connection)) {
+						command.ExecuteNonQuery();
+					}
+				} catch (Exception e) {
+					errors.Add(e.Message);
+					Console.WriteLine("Таблицы " + table + " не существует!");
+				}
+                
+                connection.Close();
             }
         }
+
+		public void ShowErrors() {
+			int counter = 1;
+			foreach (string error in errors) {
+				Console.WriteLine(counter.ToString() + ". " + error);
+				counter++;
+			}
+		}
 
         public List<KeyValuePair<string, string>> Select(string table, string where)
         {
@@ -214,7 +252,5 @@ namespace task1
             }
             return output;
         }
-
-
     }
 }

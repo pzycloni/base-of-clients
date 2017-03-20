@@ -17,26 +17,26 @@ namespace task1
             string email = "gukklucky@gmail.com";
             string password = "qwertyui";
 
-            //DB db = new DB();
+            DB db = new DB();
             //db.Create();
 
             PreferredClient client = new PreferredClient(name, password);
 
-            //client.CreateClientTable();
-            //client.CreateProductTable();
+		    client.CreateClientTable();
+            client.CreateProductTable();
 
             //записываем клиента в бд
             //client.Register(name, age, sex, email, password);
 
-            client.LoadInformation();
+            //client.LoadInformation();
             
-            client.PutMoney(150000);
+            //client.PutMoney(150000);
 
             Product macbook = new Product("mackbook", 100000);
             //client.Buy(macbook);
 
             Product airpods = new Product("airpods", 2000);
-            //client.Buy(airpods);
+            client.Buy(airpods);
 
             string users = "Clients",
                    products = "Products";
@@ -49,8 +49,8 @@ namespace task1
             //client.Register(name, age, sex, email, password);
             // вывести всех клиентов
             //client.ShowClient();
-            
 
+            //client.DropClientTable();
             //db.DropTable(users);
             //db.DropTable(products);
             //db.Drop();

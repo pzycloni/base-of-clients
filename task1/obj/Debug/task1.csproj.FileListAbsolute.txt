@@ -6,3 +6,11 @@ C:\Users\Алексей\Documents\Visual Studio 2013\Projects\task1\task1\obj\De
 C:\Users\Алексей\Documents\Visual Studio 2013\Projects\task1\task1\obj\Debug\task1.pdb
 C:\Users\Алексей\Documents\Visual Studio 2013\Projects\task1\task1\bin\Debug\Database1.mdf
 C:\Users\Алексей\Documents\Visual Studio 2013\Projects\task1\task1\bin\Debug\Database1_log.ldf
+C:\Users\Алексей\Desktop\c#\task1\task1\bin\Debug\task1.exe.config
+C:\Users\Алексей\Desktop\c#\task1\task1\obj\Debug\task1.exe
+C:\Users\Алексей\Desktop\c#\task1\task1\obj\Debug\task1.pdb
+C:\Users\Алексей\Desktop\c#\task1\task1\bin\Debug\task1.exe
+C:\Users\Алексей\Desktop\c#\task1\task1\bin\Debug\task1.pdb
+C:\Users\Алексей\Desktop\c#\task1\task1\obj\Debug\task1.csprojResolveAssemblyReference.cache
+C:\Users\Алексей\Desktop\c#\task1\task1\bin\Debug\Database1.mdf
+C:\Users\Алексей\Desktop\c#\task1\task1\bin\Debug\Database1_log.ldf
